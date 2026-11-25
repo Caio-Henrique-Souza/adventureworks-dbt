@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: stg_excel__sales_targets
+    description: Metas mensais por território vindas da planilha do time comercial.
+    data_tests:
+      - dbt_utils_free_unique_combination:
+          arguments:
+            columns: [target_month, territory_name]
+    columns:
+      - name: target_month
+        data_tests: [not_null]
+      - name: territory_name
+        description: Nome do território, como digitado na planilha. Precisa existir no cadastro.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_sales__territories')
+                field: territory_name
+      - name: target_amount
+        data_tests: [not_null]

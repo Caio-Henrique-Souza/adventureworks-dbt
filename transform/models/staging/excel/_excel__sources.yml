@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: raw_excel
+    description: Planilhas mantidas pelo negócio, carregadas por ingestion/load_excel.py.
+    schema: raw_excel
+    tables:
+      - name: metas_vendas
+        description: Metas mensais de venda (USD) por território, da planilha data/excel/metas_vendas.xlsx.

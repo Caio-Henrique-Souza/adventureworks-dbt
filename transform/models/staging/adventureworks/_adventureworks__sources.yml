@@ -1,0 +1,35 @@
+version: 2
+
+sources:
+  - name: raw_sales
+    description: Tabelas do schema Sales da Adventure Works, carregadas como texto por ingestion/load_raw.py.
+    schema: raw_sales
+    loaded_at_field: "cast(_loaded_at as timestamp)"
+    tables:
+      - name: SalesOrderHeader
+        description: Cabeçalho dos pedidos de venda.
+      - name: SalesOrderDetail
+        description: Itens dos pedidos de venda.
+      - name: Customer
+        description: Clientes (pessoa física, loja ou contato de loja).
+      - name: Store
+        description: Lojas revendedoras.
+      - name: SalesTerritory
+        description: Territórios de venda.
+
+  - name: raw_person
+    schema: raw_person
+    tables:
+      - name: Person
+        description: Pessoas (clientes, contatos e funcionários).
+      - name: Address
+      - name: StateProvince
+      - name: CountryRegion
+
+  - name: raw_production
+    schema: raw_production
+    tables:
+      - name: Product
+      - name: ProductSubcategory
+      - name: ProductCategory
+      - name: ProductModel

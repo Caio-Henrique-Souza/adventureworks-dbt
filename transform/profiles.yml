@@ -1,0 +1,9 @@
+# Perfil local: DuckDB em arquivo, sem servidor.
+# Rode o dbt de dentro da pasta transform/ com:  dbt build --profiles-dir .
+adventureworks:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', '../data/warehouse.duckdb') }}"
+      threads: 4

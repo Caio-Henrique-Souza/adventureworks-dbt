@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: stg_sales__order_headers
+    description: Um registro por pedido de venda, com tipos convertidos e status traduzido.
+    columns:
+      - name: sales_order_id
+        data_tests: [unique, not_null]
+      - name: order_date
+        data_tests: [not_null]
+      - name: customer_id
+        data_tests: [not_null]
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Em processamento', 'Aprovado', 'Em espera', 'Rejeitado', 'Enviado', 'Cancelado']
+
+  - name: stg_sales__order_details
+    description: Um registro por item de pedido.
+    columns:
+      - name: sales_order_detail_id
+        data_tests: [unique, not_null]
+      - name: sales_order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_sales__order_headers')
+                field: sales_order_id
+      - name: product_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_production__products')
+                field: product_id
+
+  - name: stg_sales__customers
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+
+  - name: stg_sales__stores
+    columns:
+      - name: store_id
+        data_tests: [unique, not_null]
+
+  - name: stg_sales__territories
+    columns:
+      - name: territory_id
+        data_tests: [unique, not_null]
+      - name: territory_name
+        data_tests: [unique, not_null]
+
+  - name: stg_person__persons
+    columns:
+      - name: person_id
+        data_tests: [unique, not_null]
+
+  - name: stg_person__addresses
+    columns:
+      - name: address_id
+        data_tests: [unique, not_null]
+
+  - name: stg_person__state_provinces
+    columns:
+      - name: state_province_id
+        data_tests: [unique, not_null]
+
+  - name: stg_person__country_regions
+    columns:
+      - name: country_region_code
+        data_tests: [unique, not_null]
+
+  - name: stg_production__products
+    columns:
+      - name: product_id
+        data_tests: [unique, not_null]
+
+  - name: stg_production__product_subcategories
+    columns:
+      - name: product_subcategory_id
+        data_tests: [unique, not_null]
+
+  - name: stg_production__product_categories
+    columns:
+      - name: product_category_id
+        data_tests: [unique, not_null]
+
+  - name: stg_production__product_models
+    columns:
+      - name: product_model_id
+        data_tests: [unique, not_null]
