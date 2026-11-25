@@ -10,6 +10,7 @@ flowchart LR
     S --> I[intermediate<br/>junções]
     I --> M[marts<br/>fatos e dimensões]
     M -->|Python| O[Excel de saída<br/>realizado x meta]
+    M -->|Python| P[Parquet<br/>para o Power BI]
 ```
 
 ## O que o projeto mostra
@@ -19,6 +20,7 @@ flowchart LR
 - **Modelagem com dbt em camadas:** `staging` (uma view por tabela, com tipos e nomes padronizados), `intermediate` (junções reaproveitáveis) e `marts` (modelo estrela).
 - **Qualidade de dados:** 64 testes, entre eles unicidade, nulos, integridade referencial entre fatos e dimensões, valores aceitos e testes de negócio. Exemplos: a soma dos itens precisa bater com o subtotal do pedido, e todo território que vendeu precisa ter meta.
 - **Excel como saída:** a planilha final tem realizado x meta com atingimento colorido, vendas por categoria e os maiores produtos e clientes.
+- **Parquet para o Power BI:** os marts também saem em Parquet. O Power BI lê sem driver e sem travar o banco enquanto o pipeline roda.
 
 ## Modelo de dados (marts)
 
@@ -39,6 +41,7 @@ flowchart LR
 | Armazenamento | DuckDB (banco em arquivo, sem servidor) |
 | Transformação e testes | dbt-core + dbt-duckdb |
 | Fonte e saída de negócio | Excel (openpyxl) |
+| Consumo no BI | Parquet → Power BI |
 
 ## Como executar
 
@@ -49,7 +52,15 @@ pip install -r requirements.txt
 python run_pipeline.py
 ```
 
-O `run_pipeline.py` baixa a base oficial (cerca de 17 MB), carrega no DuckDB, roda `dbt build` e gera `output/adventureworks_vendas.xlsx`.
+O `run_pipeline.py` baixa a base oficial (cerca de 17 MB), carrega no DuckDB, roda `dbt build` e gera `output/adventureworks_vendas.xlsx` e `output/parquet/`.
+
+### Conectar no Power BI
+
+1. **Obter dados** → **Pasta** → selecione `output/parquet`.
+2. Em **Transformar dados**, combine ou carregue cada arquivo como uma tabela: `fct_sales`, `dim_customer`, `dim_product`, `dim_territory`, `dim_date` e `fct_sales_vs_target_monthly`.
+3. Relacione `fct_sales` com as dimensões pelas chaves `customer_id`, `product_id`, `territory_id` e `order_date` → `date_day`, e marque `dim_date` como tabela de datas.
+
+Para atualizar, rode `python run_pipeline.py` e clique em **Atualizar** no Power BI.
 
 Para rodar só o dbt:
 
@@ -75,7 +86,9 @@ dbt docs generate --profiles-dir . && dbt docs serve --profiles-dir .
 │   ├── models/marts/
 │   ├── tests/                    # testes de negócio
 │   └── macros/
-├── export/export_excel.py        # marts -> Excel formatado
+├── export/
+│   ├── export_excel.py           # marts -> Excel formatado
+│   └── export_parquet.py         # marts -> Parquet (Power BI)
 └── run_pipeline.py               # orquestra tudo
 ```
 

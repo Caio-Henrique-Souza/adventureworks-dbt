@@ -7,6 +7,7 @@ Roda o pipeline completo, de ponta a ponta:
   4. load_excel.py           planilha de metas -> DuckDB (raw_excel)
   5. dbt build               staging -> intermediate -> marts, com testes
   6. export_excel.py         marts -> output/adventureworks_vendas.xlsx
+  7. export_parquet.py       marts -> output/parquet/*.parquet (para o Power BI)
 
 Uso:
     python run_pipeline.py
@@ -41,6 +42,7 @@ def main() -> None:
     passo("4. Carga do Excel de metas", [PY, "ingestion/load_excel.py"])
     passo("5. dbt build (modelos + testes)", [str(DBT), "build", "--profiles-dir", "."], cwd=ROOT / "transform")
     passo("6. Exportação para Excel", [PY, "export/export_excel.py"])
+    passo("7. Exportação para Parquet (Power BI)", [PY, "export/export_parquet.py"])
     print("\nPipeline concluído.")
 
 
