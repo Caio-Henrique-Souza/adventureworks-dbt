@@ -1,0 +1,13 @@
+version: 2
+
+models:
+  - name: int_sales__order_lines
+    description: Itens de pedido enriquecidos com cabeçalho e custo padrão do produto.
+    columns:
+      - name: sales_order_line_id
+        data_tests: [unique, not_null]
+  - name: int_customers__enriched
+    description: Clientes com nome (loja ou pessoa) e tipo.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
